@@ -11,6 +11,7 @@ pipeline {
                 checkout scm
             }
         }
+
         stage('Build & Test') {
             steps {
                 dir('app') {
@@ -19,22 +20,25 @@ pipeline {
                 }
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 dir('app') {
-                script {
-                    docker.build(DOCKER_IMAGE)
+                    script {
+                        docker.build(DOCKER_IMAGE)
+                    }
                 }
             }
         }
-        }
+
         stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh "echo $PASS | docker login -u $USER --password-stdin"
+                    bat 'echo %PASS% | docker login -u %USER% --password-stdin'
                 }
             }
         }
+
         stage('Push Docker Image') {
             steps {
                 script {
@@ -42,12 +46,14 @@ pipeline {
                 }
             }
         }
+
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl apply -f k8s/deployment.yaml'
+                bat 'kubectl apply -f k8s\\deployment.yaml'
             }
         }
     }
+
     post {
         always {
             cleanWs()
