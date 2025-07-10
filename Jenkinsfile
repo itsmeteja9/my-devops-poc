@@ -21,10 +21,12 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
+                dir('app') {
                 script {
                     docker.build(DOCKER_IMAGE)
                 }
             }
+        }
         }
         stage('Docker Login') {
             steps {
