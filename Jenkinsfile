@@ -3,12 +3,29 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "itsmeteja9/devops-poc-app"
+        SONAR_SCANNER_HOME = tool 'SonarQubeScanner'  // Must match Jenkins tool name
     }
 
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withCredentials([string(credentialsId: 'sonartoken', variable: 'SONAR_TOKEN')]) {
+                    withSonarQubeEnv('MySonarQube') {
+                        dir('app') {
+                            bat "${SONAR_SCANNER_HOME}\\bin\\sonar-scanner.bat " +
+                                "-Dsonar.projectKey=devops-poc " +
+                                "-Dsonar.sources=. " +
+                                "-Dsonar.host.url=http://localhost:9000 " +
+                                "-Dsonar.login=%SONAR_TOKEN%"
+                        }
+                    }
+                }
             }
         }
 
@@ -51,11 +68,8 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                     script {
-                        // 🔍 Debug Kubernetes Context and Connectivity
                         bat 'kubectl config current-context'
                         bat 'kubectl get nodes'
-
-                        // 🚀 Deploy to Kubernetes
                         bat 'kubectl apply -f k8s\\deployment.yaml'
                     }
                 }
