@@ -50,7 +50,14 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-                bat 'kubectl apply -f k8s\\deployment.yaml'
+                    script {
+                        // 🔍 Debug Kubernetes Context and Connectivity
+                        bat 'kubectl config current-context'
+                        bat 'kubectl get nodes'
+
+                        // 🚀 Deploy to Kubernetes
+                        bat 'kubectl apply -f k8s\\deployment.yaml'
+                    }
                 }
             }
         }
