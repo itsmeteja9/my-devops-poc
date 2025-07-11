@@ -16,7 +16,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withCredentials([string(credentialsId: 'sonartoken', variable: 'SONAR_TOKEN')]) {
-                    withSonarQubeEnv('MySonarQube') {
+                    withSonarQubeEnv('sonarserver') {
                         dir('app') {
                             bat "${SONAR_SCANNER_HOME}\\bin\\sonar-scanner.bat " +
                                 "-Dsonar.projectKey=devops-poc " +
