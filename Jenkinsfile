@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "itsmeteja9/devops-poc-app"
-        SONAR_SCANNER_HOME = tool 'SonarQubeScanner'  // Must match Jenkins tool name
+        SONAR_SCANNER_HOME = tool 'sonarscanner'  // Must match Jenkins tool name
     }
 
     stages {
