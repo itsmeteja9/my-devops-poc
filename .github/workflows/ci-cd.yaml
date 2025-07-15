@@ -43,7 +43,7 @@ jobs:
       uses: azure/setup-kubectl@v3
 
     - name: Deploy to Kubernetes
-      shell: pwsh
+      shell: powershell
       env:
         KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
       run: |
