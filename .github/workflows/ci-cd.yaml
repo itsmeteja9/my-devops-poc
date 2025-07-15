@@ -43,9 +43,11 @@ jobs:
       uses: azure/setup-kubectl@v3
 
     - name: Deploy to Kubernetes
+      shell: pwsh
       env:
         KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
       run: |
-        echo "$KUBE_CONFIG_DATA" | base64 --decode > kubeconfig
-        export KUBECONFIG=$PWD/kubeconfig
+        $decoded = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($env:KUBE_CONFIG_DATA))
+        Set-Content -Path "kubeconfig" -Value $decoded
+        $env:KUBECONFIG = "$PWD\kubeconfig"
         kubectl apply -f k8s/deployment.yaml
